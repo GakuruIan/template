@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Verify Your Email - MarketSquare</title>
+
+  <!--[if mso]>
+  <style type="text/css">
+    body, table, td {
+      font-family: Arial, Helvetica, sans-serif !important;
+    }
+  </style>
+  <![endif]-->
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f3f0ff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+        'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
+        'Helvetica Neue', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    table {
+      border-collapse: collapse;
+      border-spacing: 0;
+    }
+
+    img {
+      border: 0;
+      outline: none;
+      text-decoration: none;
+      -ms-interpolation-mode: bicubic;
+    }
+
+    .email-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #3a1bb5 0%, #5227ff 100%);
+      padding: 48px 40px;
+      text-align: center;
+    }
+
+    .logo-container {
+      margin-bottom: 16px;
+    }
+
+    .logo-text {
+      font-size: 32px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+      margin: 0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .header-subtitle {
+      font-size: 14px;
+      color: #c4b5fd;
+      margin: 8px 0 0 0;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    .content {
+      padding: 48px 40px;
+    }
+
+    .greeting {
+      font-size: 24px;
+      font-weight: 600;
+      color: #1f2937;
+      margin: 0 0 24px 0;
+      letter-spacing: -0.3px;
+    }
+
+    .message {
+      font-size: 16px;
+      line-height: 1.6;
+      color: #6b7280;
+      margin: 0 0 24px 0;
+    }
+
+    .message strong {
+      color: #374151;
+      font-weight: 600;
+    }
+
+    .code-section {
+      background: linear-gradient(135deg, #ede9ff 0%, #ddd6fe 100%);
+      border: 2px solid #5227ff;
+      border-radius: 12px;
+      padding: 28px 24px;
+      text-align: center;
+      margin: 28px 0;
+      box-shadow:
+        0 4px 6px -1px rgba(82, 39, 255, 0.1),
+        0 2px 4px -1px rgba(82, 39, 255, 0.06);
+    }
+
+    .code-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #5227ff;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      margin: 0 0 12px 0;
+    }
+
+    .verification-code {
+      font-size: 36px;
+      font-weight: 700;
+      color: #2d0f99;
+      letter-spacing: 10px;
+      font-family: 'Courier New', Courier, monospace;
+      margin: 0;
+      text-shadow: 0 2px 4px rgba(82, 39, 255, 0.15);
+      line-height: 1.2;
+    }
+
+    .code-divider {
+      width: 50px;
+      height: 3px;
+      background: linear-gradient(90deg, #3a1bb5, #5227ff);
+      margin: 16px auto;
+      border-radius: 2px;
+    }
+
+    .code-validity {
+      font-size: 13px;
+      color: #5227ff;
+      margin: 12px 0 0 0;
+      font-weight: 500;
+    }
+
+    .code-validity .time {
+      font-weight: 700;
+      color: #2d0f99;
+    }
+
+    .welcome-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #3a1bb5 0%, #5227ff 100%);
+      color: #ffffff;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 24px;
+      text-transform: uppercase;
+    }
+
+    .info-box {
+      background-color: #eff6ff;
+      border-left: 4px solid #3b82f6;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 32px 0;
+    }
+
+    .info-box-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1e40af;
+      margin: 0 0 8px 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .info-icon {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      margin-right: 8px;
+      font-size: 18px;
+    }
+
+    .info-box-text {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #1e3a8a;
+      margin: 0;
+    }
+
+    .security-notice {
+      background: linear-gradient(135deg, #fef3f2 0%, #fee2e2 100%);
+      border: 1px solid #fca5a5;
+      border-radius: 12px;
+      padding: 24px;
+      margin: 32px 0;
+    }
+
+    .security-notice-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #991b1b;
+      margin: 0 0 12px 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .security-notice-text {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #7f1d1d;
+      margin: 0;
+    }
+
+    .help-section {
+      background-color: #f9fafb;
+      border-radius: 12px;
+      padding: 24px;
+      margin: 32px 0 0 0;
+      text-align: center;
+    }
+
+    .help-text {
+      font-size: 14px;
+      color: #6b7280;
+      margin: 0 0 12px 0;
+    }
+
+    .support-link {
+      display: inline-block;
+      color: #5227ff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      padding: 10px 20px;
+      border-radius: 6px;
+    }
+
+    .footer {
+      background-color: #f9fafb;
+      padding: 40px;
+      text-align: center;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .footer-text {
+      font-size: 13px;
+      color: #9ca3af;
+      line-height: 1.6;
+      margin: 0 0 16px 0;
+    }
+
+    .footer-links {
+      margin: 16px 0;
+    }
+
+    .footer-link {
+      color: #5227ff;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      margin: 0 12px;
+    }
+
+    .copyright {
+      font-size: 12px;
+      color: #9ca3af;
+      margin: 20px 0 0 0;
+    }
+
+    @media only screen and (max-width: 600px) {
+      .email-container {
+        width: 100% !important;
+      }
+
+      .header,
+      .content,
+      .footer {
+        padding: 32px 24px !important;
+      }
+
+      .verification-code {
+        font-size: 32px !important;
+        letter-spacing: 6px !important;
+      }
+
+      .greeting {
+        font-size: 22px !important;
+      }
+
+      .code-section {
+        padding: 24px 16px !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <table
+    role="presentation"
+    width="100%"
+    cellspacing="0"
+    cellpadding="0"
+    border="0"
+  >
+    <tr>
+      <td align="center" style="padding: 40px 20px;">
+
+        <table
+          class="email-container"
+          role="presentation"
+          width="600"
+          cellspacing="0"
+          cellpadding="0"
+          border="0"
+        >
+
+          <!-- Header -->
+          <tr>
+            <td class="header">
+              <div class="logo-container">
+                <h1 class="logo-text">MarketSquare</h1>
+
+                <p class="header-subtitle">
+                  SELL • MANAGE • GROW
+                </p>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Content -->
+          <tr>
+            <td class="content">
+
+              <div style="text-align: center;">
+                <span class="welcome-badge">
+                  🛍️ Welcome to MarketSquare
+                </span>
+              </div>
+
+              <h2 class="greeting">
+                Hi {{name}},
+              </h2>
+
+              <p class="message">
+                Thank you for joining MarketSquare!
+                We're excited to have you onboard.
+                To complete your registration and verify your email address,
+                please use the verification code below:
+              </p>
+
+              <!-- Verification Code -->
+              <div class="code-section">
+                <p class="code-label">
+                  Your Verification Code
+                </p>
+
+                <div class="code-divider"></div>
+
+                <p class="verification-code">
+                  {{verificationCode}}
+                </p>
+
+                <div class="code-divider"></div>
+
+                <p class="code-validity">
+                  Valid for
+                  <span class="time">
+                    {{expiryMinutes}} minutes
+                  </span>
+                </p>
+              </div>
+
+              <p class="message">
+                Enter this code on the verification page
+                to activate your account and start managing
+                your business with MarketSquare.
+              </p>
+
+              <!-- Info Box -->
+              <div class="info-box">
+                <p class="info-box-title">
+                  <span class="info-icon">💡</span>
+                  Quick Tip
+                </p>
+
+                <p class="info-box-text">
+                  Once verified, you'll have full access
+                  to manage your store, track inventory,
+                  monitor sales, process transactions,
+                  and collaborate with your team on MarketSquare.
+                </p>
+              </div>
+
+              <!-- Security Notice -->
+              <div class="security-notice">
+                <p class="security-notice-title">
+                  <span class="info-icon">🔒</span>
+                  Security Notice
+                </p>
+
+                <p class="security-notice-text">
+                  This verification code is confidential.
+                  Never share it with anyone.
+                  MarketSquare will never ask you for your
+                  verification code via phone, email,
+                  or any other method.
+
+                  If you didn't create an account with us,
+                  you can safely ignore this email.
+                </p>
+              </div>
+
+              <!-- Help Section -->
+              <div class="help-section">
+                <p class="help-text">
+                  Need help or have questions?
+                </p>
+
+                <a
+                  href="#"
+                  class="support-link"
+                >
+                  Contact Support Team →
+                </a>
+              </div>
+
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td class="footer">
+
+              <p class="footer-text">
+                This is an automated message,
+                please do not reply to this email.
+              </p>
+
+              <div class="footer-links">
+                <a href="#" class="footer-link">
+                  Privacy Policy
+                </a>
+
+                <a href="#" class="footer-link">
+                  Terms of Service
+                </a>
+
+                <a href="#" class="footer-link">
+                  Help Center
+                </a>
+              </div>
+
+              <p class="copyright">
+                &copy; {{year}} MarketSquare.
+                All rights reserved.
+                <br>
+                UpperHill, Nairobi, Kenya
+              </p>
+
+            </td>
+          </tr>
+
+        </table>
+
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+```
