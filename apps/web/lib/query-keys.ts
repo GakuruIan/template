@@ -1,0 +1,23 @@
+export const queryKeys = {
+  branches: ["branches"] as const,
+  branchOptions: ["branch-options"] as const,
+  users: ["users"] as const,
+  suppliers: ["suppliers"] as const,
+  userOptions: ["user-options"] as const,
+  categories: ["categories"] as const,
+  products: ["products"] as const,
+  productVariants: ["product-variants"] as const,
+  purchaseOrders: ["purchase-order"] as const,
+  goodsReceipts: ["goods-receipts"] as const,
+  auditLogs: ["audit-logs"] as const,
+  terminals: ["terminals"] as const,
+  dashboard: ["dashboard"] as const,
+  roles: ["roles"] as const,
+  permissions: ["permissions"] as const,
+  invitations: {
+    accept: ["invitations", "accept"] as const,
+    list: ["invitations", "list"] as const,
+    revoke: ["invitations", "revoke"] as const,
+    verify: (token: string | null) => ["invitations", "verify", token] as const,
+  },
+}

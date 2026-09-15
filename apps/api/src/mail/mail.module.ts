@@ -12,7 +12,6 @@ import { existsSync } from 'fs';
 
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/adapters/handlebars.adapter';
 
-
 @Module({
   imports: [
     BullModule.registerQueue({ name: 'send-mail' }),

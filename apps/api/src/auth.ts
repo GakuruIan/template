@@ -1,9 +1,10 @@
 import { betterAuth } from 'better-auth';
 import type { BetterAuthOptions } from 'better-auth';
-import { emailOTP } from 'better-auth/plugins';
+import { customSession, emailOTP } from 'better-auth/plugins';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
-import { prisma, Role } from 'database';
+import { prisma } from 'database';
 import { Queue } from 'bullmq';
+import { getUserAuthorizationContext } from './permissions/permission-cache';
 
 const mailQueue = new Queue('send-mail', {
   connection: {
@@ -14,8 +15,13 @@ const mailQueue = new Queue('send-mail', {
 });
 
 const authOptions: BetterAuthOptions = {
+  basePath: '/api/auth',
   baseURL: process.env.BETTER_AUTH_URL!,
-  trustedOrigins: [process.env.STOREFRONT_URL!, process.env.ADMIN_URL!],
+  trustedOrigins: [
+    process.env.FRONTEND_URL,
+    process.env.STOREFRONT_URL,
+    process.env.ADMIN_URL,
+  ].filter((origin): origin is string => Boolean(origin)),
 
   database: prismaAdapter(prisma, {
     provider: 'postgresql',
@@ -32,10 +38,11 @@ const authOptions: BetterAuthOptions = {
   },
   user: {
     additionalFields: {
-      role: {
+      roleId: {
         type: 'string',
-        required: true,
-        defaultValue: Role.EMPLOYEE,
+        required: false,
+        input: false,
+        returned: true,
       },
     },
   },
@@ -62,6 +69,23 @@ const authOptions: BetterAuthOptions = {
       },
       otpLength: 6,
       expiresIn: 10 * 60, // 10 minutes
+    }),
+    customSession(async ({ user, session }) => {
+      const userWithRole = user as typeof user & { roleId?: string | null };
+      const authz = await getUserAuthorizationContext(
+        prisma,
+        userWithRole.id,
+        userWithRole.roleId,
+      );
+
+      return {
+        session,
+        user: {
+          ...userWithRole,
+          role: authz.role,
+          permissions: authz.permissions,
+        },
+      };
     }),
   ],
 };

@@ -1,10 +1,12 @@
 import type { Request } from 'express';
 import { auth } from 'src/auth';
-import { Role } from 'database';
 
 export type AuthSession = typeof auth.$Infer.Session;
 export type AuthUser = AuthSession['user'] & {
-  role?: Role;
+  roleId?: string | null;
+  role?: { id: string; name: string } | null;
+  permissions?: string[];
+  branchId?: string | null;
 };
 
 export type AuthenticatedRequest = Request & {

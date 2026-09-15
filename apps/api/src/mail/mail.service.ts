@@ -4,6 +4,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config/dist/config.service';
 
+// helpers
+import {
+  formatCurrency,
+  formatDate,
+  toNumber,
+} from '../common/utils/helpers.util';
+
 @Injectable()
 export class MailService {
   private readonly logger = new Logger(MailService.name);
@@ -101,6 +108,33 @@ export class MailService {
         `Failed to send password reset success email to ${email}`,
         error,
       );
+      throw error;
+    }
+  }
+
+  async sendInvitationEmail(
+    name: string,
+    email: string,
+    role: string,
+    frontend_url: string,
+    employeeCode?: string | null,
+  ) {
+    try {
+      await this.mailerService.sendMail({
+        to: email,
+        subject: 'Your have been invited to Reveal Pos',
+        template: './invitation-email',
+        context: {
+          name,
+          role,
+          employeeCode,
+          year: new Date().getFullYear(),
+          invitation_link: frontend_url,
+        },
+      });
+      this.logger.log(`Invitation email sent to ${email}`);
+    } catch (error) {
+      this.logger.error(`Failed to send invitation email to ${email}`, error);
       throw error;
     }
   }

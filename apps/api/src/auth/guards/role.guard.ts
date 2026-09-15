@@ -32,7 +32,9 @@ export class RoleGuard implements CanActivate {
       throw new UnauthorizedException('Authentication required');
     }
 
-    const hasRole = requiredRoles.includes(user.role);
+    const roleName =
+      typeof user.role === 'string' ? user.role : user.role?.name;
+    const hasRole = Boolean(roleName && requiredRoles.includes(roleName));
 
     if (!hasRole) {
       throw new ForbiddenException(

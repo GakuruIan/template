@@ -1,14 +1,25 @@
-import { Geist, Geist_Mono } from "next/font/google"
+import { Instrument_Sans, JetBrains_Mono } from "next/font/google"
 
 import "@workspace/ui/globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
-import { cn } from "@workspace/ui/lib/utils";
+import { TooltipProvider } from "@workspace/ui/components/tooltip"
+import { ReactQueryClientProvider } from "@/providers/ReactQueryProvider"
+import { Toaster } from "@workspace/ui/components/sonner"
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'})
+import { cn } from "@workspace/ui/lib/utils"
 
-const fontMono = Geist_Mono({
+const instrumentSans = Instrument_Sans({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-sans",
+  display: "swap",
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
   variable: "--font-mono",
+  display: "swap",
 })
 
 export default function RootLayout({
@@ -20,10 +31,20 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("antialiased", fontMono.variable, "font-sans", geist.variable)}
+      className={cn(
+        "antialiased",
+        instrumentSans.variable,
+        jetbrainsMono.variable,
+        "font-sans"
+      )}
     >
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ReactQueryClientProvider>
+          <TooltipProvider>
+            <ThemeProvider>{children}</ThemeProvider>
+            <Toaster richColors />
+          </TooltipProvider>
+        </ReactQueryClientProvider>
       </body>
     </html>
   )

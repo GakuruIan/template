@@ -13,6 +13,11 @@ import { AuthModule } from './auth/auth.module';
 
 import { CloudinaryService } from './cloudinary/cloudinary.service';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { UsersModule } from './users/users.module';
+import { PermissionsModule } from './permissions/permissions.module';
+import { RolesModule } from './roles/roles.module';
+import { AuditlogsModule } from './auditlogs/auditlogs.module';
+import { InvitationsModule } from './invitations/invitations.module';
 
 @Module({
   imports: [
@@ -34,6 +39,11 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     MailModule,
     AuthModule,
     CloudinaryModule,
+    UsersModule,
+    PermissionsModule,
+    RolesModule,
+    AuditlogsModule,
+    InvitationsModule,
   ],
   controllers: [],
   providers: [MailService, CloudinaryService],

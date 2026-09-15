@@ -12,14 +12,265 @@ datasource db {
   provider = "postgresql"
 }
 
-enum Role {
-  EMPLOYEE
-  ADMIN
-  ADMIN_STAFF
-}
-
 enum Status {
   ACTIVE
   INACTIVE
   DRAFT
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  RESTORE
+  ASSIGN
+  UNASSIGN
+  PAYMENT
+  REFUND
+  TRANSFER
+  EXPORT
+  IMPORT
+  REVOKE
+  PAIR
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  REVOKED
+}
+
+enum EntityType {
+  USER
+  INVITATION
+  ROLE
+}
+
+enum NotificationType {
+  SYSTEM_ALERT
+}
+
+model User {
+  id            String  @id
+  name          String
+  email         String  @unique
+  emailVerified Boolean @default(false)
+  image         String?
+  roleId        String?
+  role          Role?   @relation("UserPrimaryRole", fields: [roleId], references: [id], onDelete: SetNull)
+
+  phoneNumber String?
+
+  employeeCode String?
+  pinHash      String?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  sessions  Session[]
+  accounts  Account[]
+
+  // invitation relations
+  sentInvitations    Invitation[]   @relation("InvitationInviter")
+  revokedInvitations Invitation[]   @relation("InvitationRevoker")
+  invitation         Invitation?    @relation("InvitationUser")
+  roles              Role[]         @relation("UserRoles")
+  createdRoles       Role[]         @relation("RoleCreator")
+  deletedRoles       Role[]         @relation("RoleDeleter")
+  auditLogs          AuditLog[]
+  notifications      Notification[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime? @default(now())
+  updatedAt  DateTime? @updatedAt
+
+  @@map("verification")
+}
+
+model Role {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  createdById String?
+  creator     User?    @relation("RoleCreator", fields: [createdById], references: [id], onDelete: Cascade)
+  isSystem    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  status Status @default(ACTIVE)
+
+  deletedAt   DateTime?
+  deletedById String?
+  deletedBy   User?     @relation("RoleDeleter", fields: [deletedById], references: [id], onDelete: SetNull)
+
+  primaryUsers User[]           @relation("UserPrimaryRole")
+  users        User[]           @relation("UserRoles")
+  permissions  RolePermission[]
+
+  invitations         Invitation[]
+  permissionAuditLogs PermissionAuditLog[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id          String               @id @default(cuid())
+  key         String               @unique
+  description String?
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  roles       RolePermission[]
+  auditLogs   PermissionAuditLog[]
+
+  @@map("permissions")
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+model PermissionAuditLog {
+  id           String      @id @default(cuid())
+  action       String
+  roleId       String?
+  role         Role?       @relation(fields: [roleId], references: [id], onDelete: SetNull)
+  permissionId String?
+  permission   Permission? @relation(fields: [permissionId], references: [id], onDelete: SetNull)
+  userId       String?
+  actorId      String?
+  metadata     Json?
+  createdAt    DateTime    @default(now())
+
+  @@index([roleId])
+  @@index([permissionId])
+  @@index([userId])
+  @@map("permission_audit_logs")
+}
+
+model Invitation {
+  id        String           @id @default(uuid())
+  token     String           @unique
+  email     String
+  status    InvitationStatus @default(PENDING)
+  expiredAt DateTime
+
+  used   Boolean   @default(false)
+  usedAt DateTime?
+
+  invitedById String?
+  invitedBy   User?   @relation("InvitationInviter", fields: [invitedById], references: [id], onDelete: SetNull)
+
+  roleId String?
+  role   Role?   @relation(fields: [roleId], references: [id], onDelete: SetNull)
+
+  revokedById String?
+  revokedBy   User?   @relation("InvitationRevoker", fields: [revokedById], references: [id], onDelete: SetNull)
+
+  userId String? @unique
+  user   User?   @relation("InvitationUser", fields: [userId], references: [id], onDelete: SetNull)
+
+  revokedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([used])
+  @@index([status])
+  @@index([email])
+  @@map("invitations")
+}
+
+model AuditLog {
+  id         String     @id @default(uuid())
+  branchId   String?
+  actorId    String
+  entityType EntityType
+  entityId   String?
+
+  action AuditAction
+
+  actor User @relation(fields: [actorId], references: [id], onDelete: Cascade)
+
+  oldValue Json?
+  newValue Json?
+
+  createdAt DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([branchId, createdAt])
+  @@index([actorId])
+}
+
+model Notification {
+  id      String           @id @default(uuid())
+  type    NotificationType
+  title   String
+  message String
+
+  recipientId String
+  recipient   User   @relation(references: [id], fields: [recipientId])
+
+  entityType EntityType?
+  entityId   String?
+
+  metadata Json?
+
+  isRead Boolean   @default(false)
+  readAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@index([recipientId, isRead])
+  @@index([recipientId, createdAt])
+  @@index([type, entityType, entityId])
+  @@map("notifications")
 }
